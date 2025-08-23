@@ -5,7 +5,8 @@
   "scripts": {
     "start": "node dist/app.js",
     "dev": "ts-node src/app.ts",
-    "build": "tsc"
+    "generate:types": "openapi-typescript ./openapi.yaml --output ./src/types/api-contract.ts",
+    "build": "npm run generate:types && tsc"
   },
   "keywords": [],
   "author": "",
@@ -14,11 +15,18 @@
   "dependencies": {
     "cors": "^2.8.5",
     "dotenv": "^17.2.1",
-    "express": "^5.1.0"
+    "express": "^5.1.0",
+    "express-openapi-validator": "^5.5.8",
+    "swagger-routes-express": "^3.3.3",
+    "swagger-ui-express": "^5.0.1",
+    "yamljs": "^0.3.0"
   },
   "devDependencies": {
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.3",
+    "@types/swagger-ui-express": "^4.1.8",
+    "@types/yamljs": "^0.2.34",
+    "openapi-typescript": "^7.9.1",
     "ts-node": "^10.9.2",
     "typescript": "^5.9.2"
   }

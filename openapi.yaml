@@ -1,0 +1,60 @@
+openapi: 3.0.0
+info:
+  title: Whispr Chat API
+  version: 1.0.0
+paths:
+  /health:
+    get:
+      operationId: getHealth
+      summary: Health check endpoint
+      responses:
+        "200":
+          description: Service health
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthResponse"
+
+components:
+  schemas:
+    ResponseMessage:
+      type: object
+      required:
+        - message
+      properties:
+        message:
+          description: Message Description
+          type: string
+    ErrorResponseSchema:
+      type: object
+      required:
+        - statusCode
+        - error
+        - message
+      properties:
+        statusCode:
+          description: Status code of the response
+          type: integer
+        error:
+          description: Type of the http error
+          type: string
+        message:
+          description: Detailed description of the error
+          type: string
+    HealthResponse:
+      type: object
+      required:
+        - status
+        - uptime
+        - timestamp
+      properties:
+        status:
+          type: string
+          example: "ok"
+        uptime:
+          type: number
+          example: 123.45
+        timestamp:
+          type: string
+          format: date-time
+          example: "2025-08-23T12:34:56.789Z"
