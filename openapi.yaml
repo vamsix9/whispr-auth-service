@@ -23,8 +23,7 @@ paths:
         content:
           application/json:
             schema:
-              oneOf:
-                - $ref: '#/components/schemas/ManualSignUpRequest'
+              $ref: '#/components/schemas/ManualSignUpRequest'
       responses:
         '201':
           description: User created successfully
@@ -59,7 +58,7 @@ components:
         - signUpType
         - userName
         - password
-      anyOf:
+      oneOf:
         - required: [email]
         - required: [mobileNumber, countryCode]
       properties:
