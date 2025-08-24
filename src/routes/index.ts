@@ -1,1 +1,2 @@
-export * from '../controllers/Health.controller';
+export * from '../controller/Health.controller';
+export * from '../controller/auth/signUp.controller';
