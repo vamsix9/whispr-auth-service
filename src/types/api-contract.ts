@@ -55,7 +55,7 @@ export interface components {
             email?: string;
             /** @example password */
             password: string;
-        } | unknown | unknown;
+        } & (unknown | unknown);
         ResponseMessage: {
             /** @description Message Description */
             message: string;
