@@ -1,5 +1,5 @@
 import { Responses, TypedRequest, TypedResponse } from "../types/express";
-import * as service from "../services/Health.service";
+import * as service from "../service/Health.service";
 
 export const getHealth = (
   req: TypedRequest['getHealth'],

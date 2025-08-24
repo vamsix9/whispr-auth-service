@@ -14,9 +14,79 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthResponse"
+  /signUp:
+    post:
+      operationId: signUp
+      summary: Lets user signup using mobile number, email or social logins
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ManualSignUpRequest'
+      responses:
+        '201':
+          description: User created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseMessage'
+        '400':
+          description: Invalid input
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseSchema'
+        '409':
+          description: User already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseSchema'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseSchema'
 
 components:
   schemas:
+    ManualSignUpRequest:
+      type: object
+      required:
+        - signUpType
+        - userName
+        - password
+      oneOf:
+        - required: [email]
+        - required: [mobileNumber, countryCode]
+      properties:
+        signUpType:
+          type: string
+          enum:
+            - manual
+        countryCode:
+          type: number
+          example: '91'
+        userName:
+          type: string
+          minLength: 6
+          maxLength: 50
+          example: hiesenberg
+        mobileNumber:
+          type: number
+          minLength: 10
+          maxLength: 10
+          example: '9876543210'
+        email:
+          type: string
+          pattern: ^.+@.+\..+$
+          example: user@example.com
+        password:
+          type: string
+          minLength: 8
+          example: password
     ResponseMessage:
       type: object
       required:
