@@ -6,10 +6,14 @@ export const createUser = async (data: dto.ManualSignUpRequestDTO) => {
 };
 
 export const findUserByEmailOrMobile = async (email?: string, mobileNumber?: number) => {
-    return await UserModel.findOne({
-        $or: [
-            email ? { email } : {},
-            mobileNumber ? { mobileNumber } : {},
-        ],
-    }).exec();
+  if (email) {
+    return await UserModel.findOne({ email }).exec();
+  }
+
+  if (mobileNumber) {
+    return await UserModel.findOne({ mobileNumber }).exec();
+  }
+
+  return null;
 };
+
