@@ -38,10 +38,41 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/login": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Let's user login using mobile number or email */
+        post: operations["login"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        LoginResponse: {
+            token?: string;
+            message?: string;
+        };
+        LoginRequest: {
+            /** @example 91 */
+            countryCode?: number;
+            /** @example 9876543210 */
+            mobileNumber?: number;
+            /** @example user@example.com */
+            email?: string;
+            /** @example password */
+            password: string;
+        } & (unknown | unknown);
         ManualSignUpRequest: {
             /** @enum {string} */
             signUpType: "manual";
@@ -132,6 +163,57 @@ export interface operations {
             };
             /** @description Invalid input */
             400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponseSchema"];
+                };
+            };
+            /** @description User already exists */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponseSchema"];
+                };
+            };
+            /** @description Internal server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponseSchema"];
+                };
+            };
+        };
+    };
+    login: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["LoginRequest"];
+            };
+        };
+        responses: {
+            /** @description User logged in successfully */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["LoginResponse"];
+                };
+            };
+            /** @description User not found */
+            404: {
                 headers: {
                     [name: string]: unknown;
                 };
