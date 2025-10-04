@@ -1,4 +1,4 @@
-import { User, UserModel } from "../../model/user/user.model";
+import { UserModel } from "../../model/user/user.model";
 
 export const checkIfUserExist = async (email?: string, mobileNumber?: number) => {
     try {
