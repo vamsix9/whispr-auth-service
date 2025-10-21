@@ -64,29 +64,21 @@ export interface components {
             message?: string;
         };
         LoginRequest: {
-            /** @example 91 */
-            countryCode?: number;
-            /** @example 9876543210 */
-            mobileNumber?: number;
             /** @example user@example.com */
-            email?: string;
+            email: string;
             /** @example password */
             password: string;
-        } & (unknown | unknown);
+        };
         ManualSignUpRequest: {
             /** @enum {string} */
             signUpType: "manual";
-            /** @example 91 */
-            countryCode?: number;
             /** @example hiesenberg */
             userName: string;
-            /** @example 9876543210 */
-            mobileNumber?: number;
             /** @example user@example.com */
-            email?: string;
+            email: string;
             /** @example password */
             password: string;
-        } & (unknown | unknown);
+        };
         ResponseMessage: {
             /** @description Message Description */
             message: string;

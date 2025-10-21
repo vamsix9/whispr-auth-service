@@ -4,7 +4,7 @@ import * as repo from '../../repo/auth/signUp.repo';
 
 export const signUpUser = async (data: dto.ManualSignUpRequestDTO): Promise<dto.ResponseMessageDTO> => {
     try {
-        const existingUser = await repo.findUserByEmailOrMobile(data.email, data.mobileNumber);
+        const existingUser = await repo.findUserByEmail(data.email);
         if (existingUser) {
             throw new Error('User already exists');
         }
