@@ -1,0 +1,176 @@
+openapi: 3.1.0
+info:
+  title: Whispr Chat API
+  version: 1.0.0
+paths:
+  /health:
+    get:
+      operationId: getHealth
+      summary: Health check endpoint
+      responses:
+        "200":
+          description: Service health
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthResponse"
+  /signUp:
+    post:
+      operationId: signUp
+      summary: Lets user signup using mobile number, email or social logins
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ManualSignUpRequest'
+      responses:
+        '201':
+          description: User created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseMessage'
+        '400':
+          description: Invalid input
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseSchema'
+        '409':
+          description: User already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseSchema'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseSchema'
+  /login:
+    post:
+      operationId: login
+      summary: Let's user login using mobile number or email
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        '200':
+          description: User logged in successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginResponse'
+        '404':
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseSchema'
+        '409':
+          description: User already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseSchema'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseSchema'
+        
+components:
+  schemas:
+    LoginResponse:
+      type: object
+      properties:
+        token:
+          type: string
+        message:
+          type: string
+    LoginRequest:
+      type: object
+      required:
+        - email
+        - password
+      properties:
+        email:
+          type: string
+          pattern: ^.+@.+\..+$
+          example: user@example.com
+        password:
+          type: string
+          minLength: 8
+          example: password
+    ManualSignUpRequest:
+      type: object
+      required:
+        - signUpType
+        - userName
+        - email
+        - password
+      properties:
+        signUpType:
+          type: string
+          enum:
+            - manual
+        userName:
+          type: string
+          minLength: 6
+          maxLength: 50
+          example: hiesenberg
+        email:
+          type: string
+          pattern: ^.+@.+\..+$
+          example: user@example.com
+        password:
+          type: string
+          minLength: 8
+          example: password
+    ResponseMessage:
+      type: object
+      required:
+        - message
+      properties:
+        message:
+          description: Message Description
+          type: string
+    ErrorResponseSchema:
+      type: object
+      required:
+        - statusCode
+        - error
+        - message
+      properties:
+        statusCode:
+          description: Status code of the response
+          type: integer
+        error:
+          description: Type of the http error
+          type: string
+        message:
+          description: Detailed description of the error
+          type: string
+    HealthResponse:
+      type: object
+      required:
+        - status
+        - uptime
+        - timestamp
+      properties:
+        status:
+          type: string
+          example: "ok"
+        uptime:
+          type: number
+          example: 123.45
+        timestamp:
+          type: string
+          format: date-time
+          example: "2025-08-23T12:34:56.789Z"
