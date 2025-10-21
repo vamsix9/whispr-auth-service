@@ -19,13 +19,7 @@ export class User {
     userName!: string;
 
     @prop()
-    email?: string;
-
-    @prop()
-    countryCode?: string;
-
-    @prop()
-    mobileNumber?: number;
+    email!: string;
 
     @prop({ required: true })
     password!: string;
