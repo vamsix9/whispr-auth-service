@@ -1,4 +1,4 @@
-openapi: 3.1.0
+openapi: 3.0.0
 info:
   title: Whispr Chat API
   version: 1.0.0
@@ -112,6 +112,41 @@ paths:
                 $ref: '#/components/schemas/ErrorResponseSchema'
         '401':
           description: Refresh token expired or unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseSchema'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseSchema'
+  /logout:
+    post:
+      operationId: logout
+      summary: Logs out the currently authenticated user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LogoutRequest'
+      responses:
+        '200':
+          description: User logged out successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseMessage'
+        '400':
+          description: Invalid request payload or missing refresh token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseSchema'
+        '401':
+          description: Unauthorized or invalid token
           content:
             application/json:
               schema:
@@ -242,4 +277,12 @@ components:
           type: string
           description: Message indicating successful token refresh
           example: Token refreshed successfully
-
+    LogoutRequest:
+      type: object
+      required:
+        - refreshToken
+      properties:
+        refreshToken:
+          type: string
+          description: Refresh token to invalidate during logout
+          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
