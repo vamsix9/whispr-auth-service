@@ -5,7 +5,7 @@ dotenv.config();
 
 const { DB_HOST, DB_NAME, DB_USER, DB_PASS } = process.env;
 
-const connectDB = async (): Promise<void> => {
+export const connectDB = async (): Promise<void> => {
   try {
     const uri = `mongodb+srv://${DB_USER}:${DB_PASS}@${DB_HOST}/${DB_NAME}?retryWrites=true&w=majority`;
 

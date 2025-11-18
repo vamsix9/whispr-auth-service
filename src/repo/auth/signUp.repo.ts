@@ -1,11 +1,12 @@
 import { UserModel } from "../../model/user/user.model";
-import * as dto from '../../dto/auth/signUp.dto';
+import * as dto from "../../dto/auth/signUp.dto";
+import { PrismaClient } from "../../generated/prisma/client";
 
-export const createUser = async (data: dto.ManualSignUpRequestDTO) => {
-    return await UserModel.create(data);
+export const createUsers = async (data: dto.ManualSignUpRequestDTO) => {
+  return await UserModel.create(data);
 };
 
-export const findUserByEmail = async (email: string) => {
+export const findUserByEmails = async (email: string) => {
   if (email) {
     return await UserModel.findOne({ email }).exec();
   }
@@ -13,3 +14,32 @@ export const findUserByEmail = async (email: string) => {
   return null;
 };
 
+
+export const findUserByEmail = (email: string) => {
+  const prisma = new PrismaClient();
+
+  return prisma.user.findUnique({
+    where: {
+      email: email,
+    },
+  });
+};
+ 
+
+export const createUser = async (data: dto.ManualSignUpRequestDTO) => {
+  const prisma = new PrismaClient();
+
+  try {
+    const newUser = await prisma.user.create({
+      data: {
+        signUpType: data.signUpType,
+        email: data.email,
+        password: data.password,
+        userName: data.userName,
+      },
+    });
+    return newUser;
+  } finally {
+    await prisma.$disconnect();
+  }
+};
