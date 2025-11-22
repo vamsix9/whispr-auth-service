@@ -7,7 +7,6 @@ import swaggerUi from "swagger-ui-express";
 import YAML from "yamljs";
 import { connector } from "swagger-routes-express";
 import * as routes from "./routes/index";
-import { connectDB } from "./config/database";
 
 dotenv.config();
 
@@ -82,7 +81,7 @@ app.use(
 
 connectRoutes(app);
 
-connectDB();
+// connectDB();
 
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
