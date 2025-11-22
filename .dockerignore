@@ -1,2 +1,18 @@
-node_modules/
-dist/
+# Ignore node_modules from host
+**/node_modules
+node_modules
+
+# Ignore build output when building
+dist
+
+# Ignore env files (so secrets are not baked in)
+.env
+.env.*
+
+# Ignore git stuff
+.git
+.gitignore
+
+# Ignore local logs / temp
+npm-debug.log*
+yarn-debug.log*
