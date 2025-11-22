@@ -1,11 +1,14 @@
-import { UserModel } from "../../model/user/user.model";
+
+
+import { prisma } from "../../config/prisma";
 
 export const checkIfUserExist = async (email: string) => {
     try {
-        if (email) {
-            return await UserModel.findOne({ email }).exec();
-        }
+        if (!email) return null;
+        return await prisma.user.findUnique({
+            where: { email },
+        });
     } catch (err) {
         throw err;
     }
-}
+};
