@@ -6,7 +6,9 @@
     "start": "node dist/app.js",
     "dev": "ts-node src/app.ts",
     "generate:types": "openapi-typescript ./openapi.yaml --output ./src/types/api-contract.ts",
-    "build": "npm run generate:types && tsc"
+    "build": "npm run generate:types && tsc",
+    "test": "vitest",
+    "coverage": "vitest run --coverage"
   },
   "keywords": [],
   "author": "",
@@ -39,9 +41,11 @@
     "@types/pg": "^8.15.6",
     "@types/swagger-ui-express": "^4.1.8",
     "@types/yamljs": "^0.2.34",
+    "@vitest/coverage-v8": "^4.0.14",
     "openapi-typescript": "^7.9.1",
     "prisma": "^7.0.0",
     "ts-node": "^10.9.2",
-    "typescript": "^5.9.2"
+    "typescript": "^5.9.2",
+    "vitest": "^4.0.14"
   }
 }
