@@ -21,7 +21,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/signUp": {
+    "/signup": {
         parameters: {
             query?: never;
             header?: never;
@@ -30,8 +30,42 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** Lets user signup using mobile number, email or social logins */
-        post: operations["signUp"];
+        /** Lets user signup */
+        post: operations["signup"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/verfiy-email": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Verify user's email */
+        post: operations["verifyEmail"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/send-verification-code": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Sends verification code to user's email */
+        post: operations["sendVerificationCode"];
         delete?: never;
         options?: never;
         head?: never;
@@ -47,7 +81,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** Let's user login using mobile number or email */
+        /** Let's user login using email and password */
         post: operations["login"];
         delete?: never;
         options?: never;
@@ -55,7 +89,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/refreshToken": {
+    "/refresh-token": {
         parameters: {
             query?: never;
             header?: never;
@@ -64,11 +98,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /**
-         * Refresh access token using refresh token
-         * @description Allows the client to obtain a new access token by providing a valid refresh token. The refresh token must be valid and not expired.
-         *
-         */
+        /** Refresh access token using refresh token */
         post: operations["refreshToken"];
         delete?: never;
         options?: never;
@@ -93,33 +123,79 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/forgot-password": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Initiates password reset process */
+        post: operations["forgotPassword"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/reset-password": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Resets user's password using reset token */
+        post: operations["resetPassword"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/me": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Retrieves information about the currently authenticated user */
+        get: operations["getCurrentUser"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
-        LoginResponse: {
-            token?: string;
-            message?: string;
-        };
-        LoginRequest: {
-            /** @example user@example.com */
-            email: string;
-            /** @example password */
-            password: string;
-        };
-        ManualSignUpRequest: {
-            /** @enum {string} */
-            signUpType: "manual";
-            /** @example hiesenberg */
-            userName: string;
-            /** @example user@example.com */
-            email: string;
-            /** @example password */
-            password: string;
-        };
         ResponseMessage: {
             /** @description Message Description */
             message: string;
+        };
+        SignUpRequest: {
+            userName: string;
+            /** Format: email */
+            email: string;
+            password: string;
+        };
+        LoginRequest: {
+            /** Format: email */
+            email: string;
+            password: string;
+        };
+        LoginResponse: {
+            token?: string;
+            message?: string;
         };
         ErrorResponseSchema: {
             /** @description Status code of the response */
@@ -130,15 +206,7 @@ export interface components {
             message: string;
         };
         HealthResponse: {
-            /** @example ok */
             status: string;
-            /** @example 123.45 */
-            uptime: number;
-            /**
-             * Format: date-time
-             * @example 2025-08-23T12:34:56.789Z
-             */
-            timestamp: string;
         };
         RefreshTokenRequest: {
             /**
@@ -200,7 +268,7 @@ export interface operations {
             };
         };
     };
-    signUp: {
+    signup: {
         parameters: {
             query?: never;
             header?: never;
@@ -209,7 +277,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["ManualSignUpRequest"];
+                "application/json": components["schemas"]["SignUpRequest"];
             };
         };
         responses: {
@@ -233,6 +301,106 @@ export interface operations {
             };
             /** @description User already exists */
             409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponseSchema"];
+                };
+            };
+            /** @description Internal server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponseSchema"];
+                };
+            };
+        };
+    };
+    verifyEmail: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    /** Format: email */
+                    email: string;
+                    verificationCode: string;
+                };
+            };
+        };
+        responses: {
+            /** @description Email verified successfully */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ResponseMessage"];
+                };
+            };
+            /** @description Invalid input or verification code */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponseSchema"];
+                };
+            };
+            /** @description User not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponseSchema"];
+                };
+            };
+            /** @description Internal server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponseSchema"];
+                };
+            };
+        };
+    };
+    sendVerificationCode: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    /** Format: email */
+                    email: string;
+                };
+            };
+        };
+        responses: {
+            /** @description Verification code sent successfully */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ResponseMessage"];
+                };
+            };
+            /** @description Invalid email format */
+            400: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -382,6 +550,156 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ErrorResponseSchema"];
+                };
+            };
+            /** @description Unauthorized or invalid token */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponseSchema"];
+                };
+            };
+            /** @description Internal server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponseSchema"];
+                };
+            };
+        };
+    };
+    forgotPassword: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    /** Format: email */
+                    email: string;
+                };
+            };
+        };
+        responses: {
+            /** @description Password reset initiated successfully */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ResponseMessage"];
+                };
+            };
+            /** @description Invalid email format */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponseSchema"];
+                };
+            };
+            /** @description User not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponseSchema"];
+                };
+            };
+            /** @description Internal server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponseSchema"];
+                };
+            };
+        };
+    };
+    resetPassword: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    resetToken: string;
+                    newPassword: string;
+                };
+            };
+        };
+        responses: {
+            /** @description Password reset successfully */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ResponseMessage"];
+                };
+            };
+            /** @description Invalid input or reset token */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponseSchema"];
+                };
+            };
+            /** @description User not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponseSchema"];
+                };
+            };
+            /** @description Internal server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponseSchema"];
+                };
+            };
+        };
+    };
+    getCurrentUser: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Current user information retrieved successfully */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        userName?: string;
+                        /** Format: email */
+                        email?: string;
+                    };
                 };
             };
             /** @description Unauthorized or invalid token */
