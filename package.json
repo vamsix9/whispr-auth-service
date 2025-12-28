@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "start": "node dist/app.js",
+    "start": "tsc && node dist/app.js",
     "dev": "ts-node src/app.ts",
     "generate:types": "openapi-typescript ./openapi.yaml --output ./src/types/api-contract.ts",
     "build": "npm run generate:types && tsc",
@@ -15,8 +15,6 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
-    "@prisma/adapter-pg": "^7.0.0",
-    "@prisma/client": "^7.0.0",
     "bcrypt": "^6.0.0",
     "cors": "^2.8.5",
     "dotenv": "^17.2.3",
@@ -43,7 +41,6 @@
     "@types/yamljs": "^0.2.34",
     "@vitest/coverage-v8": "^4.0.14",
     "openapi-typescript": "^7.9.1",
-    "prisma": "^7.0.0",
     "ts-node": "^10.9.2",
     "typescript": "^5.9.2",
     "vitest": "^4.0.14"

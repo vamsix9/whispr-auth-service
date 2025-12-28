@@ -8,6 +8,7 @@ export const login = async (req: TypedRequest['login'], res: TypedResponse<Respo
         return res.status(200).json(result);
     }
     catch (err) {
+        console.log('Error in login controller:', err);
         throw err;
     }
 }

@@ -1,9 +1,9 @@
 import { Responses, TypedRequest, TypedResponse } from "../../types/express";
 import * as service from "../../service/auth/signUp.service";
 
-export const signUp = async (
-  req: TypedRequest["signUp"],
-  res: TypedResponse<Responses["signUp"]>
+export const signup = async (
+  req: TypedRequest["signup"],
+  res: TypedResponse<Responses["signup"]>
 ) => {
   try {
     const data = req.body;

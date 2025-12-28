@@ -3,9 +3,7 @@ import * as dto from "../dto/getHealth.dto";
 export const getHealth = (): dto.getHealthResponseDTO => {
   try {
     return {
-      status: "ok",
-      uptime: process.uptime(),
-      timestamp: new Date().toISOString(),
+      status: "ok"
     }
   }
   catch(err) {
