@@ -2,10 +2,18 @@ openapi: 3.0.0
 info:
   title: Whispr Chat API
   version: 1.0.0
+
+
+tags:
+  - name: Auth
+  - name: User
+  - name: Health
+
 paths:
   /health:
     get:
       operationId: getHealth
+      tags: [Health]
       summary: Health check endpoint
       responses:
         "200":
@@ -14,16 +22,18 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthResponse"
-  /signUp:
+
+  /signup:
     post:
-      operationId: signUp
-      summary: Lets user signup using mobile number, email or social logins
+      operationId: signup
+      tags: [Auth]
+      summary: Lets user signup
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ManualSignUpRequest'
+              $ref: '#/components/schemas/SignUpRequest'
       responses:
         '201':
           description: User created successfully
@@ -49,10 +59,95 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponseSchema'
+
+  /verfiy-email:
+    post:
+      operationId: verifyEmail
+      tags: [Auth]
+      summary: Verify user's email
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - verificationCode
+              properties:
+                email:
+                  type: string
+                  format: email
+                verificationCode:
+                  type: string
+      responses:
+        '200':
+          description: Email verified successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseMessage'
+        '400':
+          description: Invalid input or verification code
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseSchema'
+        '404':
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseSchema'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseSchema'
+
+  /send-verification-code:
+    post:
+      operationId: sendVerificationCode
+      tags: [Auth]
+      summary: Sends verification code to user's email
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+              properties:
+                email:
+                  type: string
+                  format: email
+      responses:
+        '200':
+          description: Verification code sent successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseMessage'
+        '400':
+          description: Invalid email format
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseSchema'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseSchema'
+
   /login:
     post:
       operationId: login
-      summary: Let's user login using mobile number or email
+      tags: [Auth]
+      summary: Let's user login using email and password
       requestBody:
         required: true
         content:
@@ -84,13 +179,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponseSchema'
-  /refreshToken:
+
+  /refresh-token:
     post:
       operationId: refreshToken
+      tags: [Auth]
       summary: Refresh access token using refresh token
-      description: >
-        Allows the client to obtain a new access token by providing a valid refresh token.
-        The refresh token must be valid and not expired.
       requestBody:
         required: true
         content:
@@ -122,9 +216,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponseSchema'
+
   /logout:
     post:
       operationId: logout
+      tags: [Auth]
       summary: Logs out the currently authenticated user
       requestBody:
         required: true
@@ -158,9 +254,162 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponseSchema'
 
-        
+  /forgot-password:
+    post:
+      operationId: forgotPassword
+      tags: [Auth]
+      summary: Initiates password reset process
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+              properties:
+                email:
+                  type: string
+                  format: email
+      responses:
+        '200':
+          description: Password reset initiated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseMessage'
+        '400':
+          description: Invalid email format
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseSchema'
+        '404':
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseSchema'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseSchema'
+  
+  /reset-password:
+    post:
+      operationId: resetPassword
+      tags: [Auth]
+      summary: Resets user's password using reset token
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - resetToken
+                - newPassword
+              properties:
+                resetToken:
+                  type: string
+                newPassword:
+                  type: string
+                  minLength: 8
+      responses:
+        '200':
+          description: Password reset successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseMessage'
+        '400':
+          description: Invalid input or reset token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseSchema'
+        '404':
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseSchema'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseSchema'
+
+  /me:
+    get:
+      operationId: getCurrentUser
+      tags: [User]
+      summary: Retrieves information about the currently authenticated user
+      responses:
+        '200':
+          description: Current user information retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  userName:
+                    type: string
+                  email:
+                    type: string
+                    format: email
+        '401':
+          description: Unauthorized or invalid token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseSchema'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseSchema'   
+
 components:
   schemas:
+    ResponseMessage:
+      type: object
+      required: [message]
+      properties:
+        message:
+          description: Message Description
+          type: string
+
+    SignUpRequest:
+      type: object
+      required: [userName, email, password]
+      properties:
+        userName:
+          type: string
+          minLength: 6
+          maxLength: 50
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          minLength: 8
+
+    LoginRequest:
+      type: object
+      required: [email, password]
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          minLength: 8
+
     LoginResponse:
       type: object
       properties:
@@ -168,53 +417,8 @@ components:
           type: string
         message:
           type: string
-    LoginRequest:
-      type: object
-      required:
-        - email
-        - password
-      properties:
-        email:
-          type: string
-          pattern: ^.+@.+\..+$
-          example: user@example.com
-        password:
-          type: string
-          minLength: 8
-          example: password
-    ManualSignUpRequest:
-      type: object
-      required:
-        - signUpType
-        - userName
-        - email
-        - password
-      properties:
-        signUpType:
-          type: string
-          enum:
-            - manual
-        userName:
-          type: string
-          minLength: 6
-          maxLength: 50
-          example: hiesenberg
-        email:
-          type: string
-          pattern: ^.+@.+\..+$
-          example: user@example.com
-        password:
-          type: string
-          minLength: 8
-          example: password
-    ResponseMessage:
-      type: object
-      required:
-        - message
-      properties:
-        message:
-          description: Message Description
-          type: string
+
+
     ErrorResponseSchema:
       type: object
       required:
@@ -235,19 +439,9 @@ components:
       type: object
       required:
         - status
-        - uptime
-        - timestamp
       properties:
         status:
           type: string
-          example: "ok"
-        uptime:
-          type: number
-          example: 123.45
-        timestamp:
-          type: string
-          format: date-time
-          example: "2025-08-23T12:34:56.789Z"
     RefreshTokenRequest:
       type: object
       required:
