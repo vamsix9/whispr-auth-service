@@ -16,23 +16,24 @@ export const login = async (password: string, email: string) => {
 
     // 1️⃣ Check if user exists
     const user = await repo.checkIfUserExist(email);
+
     if (!user) {
       throw new Error(UserDoesNotExist);
     }
 
     // 2️⃣ Compare password
-    const isPasswordMatching = await bcrypt.compare(password, user.password);
+    const isPasswordMatching = await bcrypt.compare(password, user.password_hash);
     if (!isPasswordMatching) {
       throw new Error(IncorrectPassword);
     }
 
     // 3️⃣ Generate JWT
     const expiresIn = '12h';
-    const token = jwt.sign({ id: user._id }, JWT_SECRET, { expiresIn });
+    const token = jwt.sign({ id: user.id }, JWT_SECRET, { expiresIn });
 
     // 4️⃣ Store token in Redis with TTL (12 hours = 43200 seconds)
     const ttlSeconds = 12 * 60 * 60;
-    const redisKey = user._id.toString();
+    const redisKey = user.id;
 
     try {
       await generateTokenAndStoreInRedis(redisKey, token, ttlSeconds);
