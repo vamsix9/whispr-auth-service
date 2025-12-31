@@ -5,10 +5,9 @@ export const checkIfUserExist = async (email: string) => {
         if (!email) return null;
         const result = await pool.query(
             `
-            SELECT email, password_hash
+            SELECT email, password_hash, id
             FROM users
             WHERE email = Lower($1)
-            LIMIT 1
             `,
             [email]
         )
